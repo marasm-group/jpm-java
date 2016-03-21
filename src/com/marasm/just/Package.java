@@ -1,4 +1,4 @@
-package com.marasm;
+package com.marasm.just;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,11 +7,12 @@ import java.nio.file.Path;
 import java.util.Hashtable;
 import java.util.List;
 import org.apache.commons.io.*;
+import org.json.JSONObject;
 
-import static com.marasm.Utils.execShell;
+import static com.marasm.just.Utils.execShell;
 
 /**
- * Created by Andrey on 15.11.2015.
+ * Created by Andrey Bogdanov on 15.11.2015.
  */
 
 public class Package {
@@ -19,7 +20,7 @@ public class Package {
     final static String installPackageCMD = "cd %@ && ./install";
     final static String removePackageCMD = "cd %@ && ./remove";
 
-    Hashtable info;
+    JSONObject info;
     List dependencies;
     String name;
     String author;

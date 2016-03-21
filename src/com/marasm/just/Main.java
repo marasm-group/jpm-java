@@ -1,13 +1,14 @@
-package com.marasm;
+package com.marasm.just;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
-import com.marasm.Utils;
+import com.marasm.just.Utils;
 
-public class Main {
+public class Main
+{
 
     static String just_logo = "" +
     "############################################\n" +
@@ -54,85 +55,81 @@ public class Main {
         if(str.equals("rmrepo")){System.out.println("usage: rmrepo <repo name>\nremove repository"); return;}
         if(str.equals("list")){System.out.println("usage: list [repo name]\nlist packages in repo or in all connected repos"); return;}
         else {
-            System.out.println(str + " is not a just package manager command");
+            System.out.println(str + " is not a valid just package manager command");
             return;
         }
     }
 
     static void execCMD(String cmd, String[] args)
     {
-        if(cmd.equals("exit"))
+        boolean result=false;
+        switch (cmd)
         {
-            System.exit(0);
+            case "exit":
+                result=true;
+                System.exit(0);
+                break;
+            case "refresh":
+                // TODO: Add after Repository class is implemented
+                System.out.println("Command is not yet implemented");
+                break;
+            case "installed":
+                // TODO: Add after Package class is implemented
+                System.out.println("Command is not yet implemented");
+                break;
+            case "update":
+                // TODO: Add after Package class is implemented
+                System.out.println("Command is not yet implemented");
+                break;
+            case "repos":
+                // TODO: Add after Repository class is implemented
+                System.out.println("Command is not yet implemented");
+                break;
+            case "help":
+                result=true;
+                if(args.length == 0)
+                    help(null);
+                else if(args.length == 1)
+                    help(args[0]);
+                else;
+                break;
+            case "list":
+                // TODO: Add after Repository class is implemented
+                System.out.println("Command is not yet implemented");
+                break;
+            case "search":
+                // TODO: Add after Repository class is implemented
+                System.out.println("Command is not yet implemented");
+                break;
+            case "install":
+                // TODO: Add after Repository and Package classes are implemented
+                System.out.println("Command is not yet implemented");
+                break;
+            case "remove":
+                // TODO: Add after Package class is implemented
+                System.out.println("Command is not yet implemented");
+                if(args.length<1){System.out.println("Too few arguments");break;}
+                break;
+            case "addrepo":
+                if(args.length<1){System.out.println("Too few arguments");break;}
+                result=Repository.add(args[0]);
+                break;
+            case "rmrepo":
+                if(args.length<1){System.out.println("Too few arguments");break;}
+                Repository r=Repository.repoNamed(args[0]);
+                if(r==null)
+                {
+                    System.out.print("No repo '"+args[0]+"'");
+                    break;
+                }
+                result=r.remove();
+                break;
+            default:
+                System.out.println("Unknown command '"+cmd+"'");
+                break;
         }
-        if(cmd.equals("refresh"))
-        {
-            // TODO: Add after Repository class is implemented
-            System.out.println("Command is not yet implemented");
-            return;
-        }
-        if(cmd.equals("installed"))
-        {
-            // TODO: Add after Package class is implemented
-            System.out.println("Command is not yet implemented");
-            return;
-        }
-        if(cmd.equals("update"))
-        {
-            // TODO: Add after Package class is implemented
-            System.out.println("Command is not yet implemented");
-            return;
-        }
-        if(cmd.equals("repos"))
-        {
-            // TODO: Add after Repository class is implemented
-            System.out.println("Command is not yet implemented");
-            return;
-        }
-        if(cmd.equals("help"))
-        {
-            if(args.length == 0)
-                help(null);
-            else if(args.length == 1)
-                help(args[0]);
-            else;
-        }
-        if(cmd.equals("list"))
-        {
-            // TODO: Add after Repository class is implemented
-            System.out.println("Command is not yet implemented");
-            return;
-        }
-        if(cmd.equals("search"))
-        {
-            // TODO: Add after Repository class is implemented
-            System.out.println("Command is not yet implemented");
-            return;
-        }
-        if(cmd.equals("install"))
-        {
-            // TODO: Add after Repository and Package classes are implemented
-            System.out.println("Command is not yet implemented");
-            return;
-        }
-        if(cmd.equals("remove"))
-        {
-            // TODO: Add after Package class is implemented
-            System.out.println("Command is not yet implemented");
-            return;
-        }
-        if(cmd.equals("addrepo"))
-        {
-            // TODO: Add after Repository class is implemented
-            System.out.println("Command is not yet implemented");
-            return;
-        }
-        if(cmd.equals("remrepo"))
-        {
-            // TODO: Add after Repository class is implemented
-            System.out.println("Command is not yet implemented");
-            return;
-        }
+        if(result){System.out.println("Done OK!");}
+        else{System.out.println("Command failed!");}
     }
 
     static void interactiveMode() throws IOException
@@ -141,6 +138,7 @@ public class Main {
 
         for(;;)
         {
+            System.out.print("just> ");
             BufferedReader consoleInput = new BufferedReader(new InputStreamReader(System.in));
             try {
                 String inputString = consoleInput.readLine();
@@ -159,10 +157,13 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) throws IOException {
-	// write your code here
+    public static void main(String[] args) throws IOException
+    {
+        Utils.createDirIfNeeded(Utils.just_home());
+        Utils.createDirIfNeeded(Utils.registryPath());
+        Utils.createDirIfNeeded(Utils.reposPath());
+        Utils.createDirIfNeeded(Utils.installedPath());
         String command;
-
         if(args.length > 0)
         {
             String[] cmdArgs = new String[args.length - 1];

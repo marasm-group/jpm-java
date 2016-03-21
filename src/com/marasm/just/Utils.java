@@ -1,4 +1,4 @@
-package com.marasm;
+package com.marasm.just;
 import javax.annotation.processing.FilerException;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.util.Hashtable;
 import java.io.File;
 
 /**
- * Created by abogdanov on 31.10.15.
+ * Created by Andrey Bogdanov on 31.10.15.
  */
 public class Utils {
 
@@ -40,9 +40,13 @@ public class Utils {
         just_settings = set;
     }
 
+    public static String mainJarLocation()
+    {
+        return new File(Main.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsoluteFile().getParent().replaceAll("\\%20"," ");
+    }
     static String just_home()
     {
-        return System.getProperty("user.dir");
+        return mainJarLocation();
     }
 
     static String reposPath()
@@ -93,10 +97,10 @@ public class Utils {
     {
         // TODO: Windows cmd support. Right now it doesn't work.
         StringBuffer output =  new StringBuffer();
-
+        String[] cmdArr = new String[]{"/bin/bash", "-c",cmd};
         Process process;
         try {
-            process = Runtime.getRuntime().exec(cmd);
+            process = Runtime.getRuntime().exec(cmdArr);
             process.waitFor();
             BufferedReader bReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
@@ -134,5 +138,13 @@ public class Utils {
         }
 
         return contents;
+    }
+    static String substitutePath(String cmd,String path)
+    {
+        return cmd.replaceFirst("\\%\\@",path);
+    }
+    static String substitutePathAndRemote(String cmd,String path,String remote)
+    {
+        return cmd.replaceFirst("\\%\\@",path).replaceFirst("\\%\\@",remote);
     }
 }
