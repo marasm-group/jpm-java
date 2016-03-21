@@ -7,8 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import static com.marasm.just.Utils.execShell;
-import static com.marasm.just.Utils.substitutePath;
+
+import static com.marasm.just.Utils.*;
 
 /**
  * Created by Sergey Rump on 15.11.2015.
@@ -39,9 +39,42 @@ public class Repository
         }
         return true;
     }
-    Package findPackage(String name){return null;}
-    ArrayList<Package> findPackages(String Name){return new ArrayList<Package>();}
-    ArrayList<Package> allPackages(){return new ArrayList<Package>();}
+    Package findPackage(String name)
+    {
+        if(!Utils.fileExists(subFolder(path,name)))
+        {
+            return null;
+        }
+        return Package.packageWithPath(Utils.subFolder(path,name));
+    }
+    static ArrayList<Package> findPackages(String name)
+    {
+        ArrayList<String>repos=arrayOfFoldersInFolder(reposPath());
+        if(repos.size()==0){return new ArrayList<Package>();}
+        ArrayList<Package> found=new ArrayList<>();
+        for(String repo:repos)
+        {
+            Repository r=repoNamed(Utils.lastPathComponent(repo));
+            Package p=r.findPackage(name);
+            if(p!=null)
+            {
+                found.add(p);
+            }
+        }
+        return found;
+    }
+    ArrayList<Package> allPackages()
+    {
+        ArrayList<Package>packages=new ArrayList<>();
+        ArrayList<String>tmp=Utils.arrayOfFoldersInFolder(path);
+        for(String pf:tmp)
+        {
+            Package p=Package.packageWithPath(pf);
+            if(p!=null){packages.add(p);}
+            else{System.out.println("ERROR: something wrong with package '"+pf+"'");}
+        }
+        return packages;
+    }
     static Repository repoNamed(String name)
     {
         if(!exists(name)){return null;}

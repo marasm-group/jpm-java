@@ -133,7 +133,7 @@ public class Utils {
 
         for(File tmp : files)
         {
-            if(tmp.isDirectory() && tmp.getName() != ".git")
+            if(tmp.isDirectory() && !tmp.getName().equals(".git"))
                 contents.add(tmp.getAbsolutePath());
         }
 

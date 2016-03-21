@@ -103,8 +103,14 @@ public class Main
                 else;
                 break;
             case "list":
-                // TODO: Add after Repository class is implemented
-                System.out.println("Command is not yet implemented");
+                if(args.length<1){System.out.println("Too few arguments");break;}
+                Repository r=Repository.repoNamed(args[0]);
+                ArrayList<Package>allPackages=r.allPackages();
+                for(Package p:allPackages)
+                {
+                    System.out.println(p.name+" "+p.version);
+                }
+                result=true;
                 break;
             case "search":
                 // TODO: Add after Repository class is implemented
@@ -125,7 +131,7 @@ public class Main
                 break;
             case "rmrepo":
                 if(args.length<1){System.out.println("Too few arguments");break;}
-                Repository r=Repository.repoNamed(args[0]);
+                r = Repository.repoNamed(args[0]);
                 if(r==null)
                 {
                     System.out.print("No repo '"+args[0]+"'");
