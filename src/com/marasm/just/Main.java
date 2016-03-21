@@ -147,7 +147,7 @@ public class Main
         else{System.out.println("Command failed!");}
     }
 
-    static void interactiveMode() throws IOException
+    static void interactiveMode()
     {
         System.out.println(just_logo);
 
@@ -174,7 +174,7 @@ public class Main
         }
     }
 
-    public static void main(String[] args) throws IOException
+    public static void main(String[] args)
     {
         Utils.createDirIfNeeded(Utils.just_home());
         Utils.createDirIfNeeded(Utils.registryPath());

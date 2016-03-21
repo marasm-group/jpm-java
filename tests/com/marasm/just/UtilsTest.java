@@ -57,5 +57,7 @@ public class UtilsTest {
     @Test
     public void testExecShell() throws Exception {
         assertTrue(Utils.execShell("ls"));
+        assertTrue(Utils.execShell("pwd"));
+        assertTrue(Utils.execShell("echo $JAVA_HOME"));
     }
 }
