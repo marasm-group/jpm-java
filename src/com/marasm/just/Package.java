@@ -126,9 +126,19 @@ public class Package {
         return false;
     }
 
-    static List installed()
+    ArrayList<Package> installed()
     {
-        return null;
+        // TODO: check this. I highly doubt this will work.
+        ArrayList<String> names = Utils.arrayOfFoldersInFolder(Utils.installedPath());
+        ArrayList<Package> packages = new ArrayList<Package>();
+        for(int i = 0; i < names.size(); i++)
+        {
+            String name = names.get(i);
+            Package r = packageWithPath(Utils.subFolder(Utils.installedPath(), this.name));
+            if(r != null)
+                packages.add(r);
+        }
+        return packages;
     }
 
     static Package packageWithRepo(Repository repo, String name)
