@@ -1,9 +1,9 @@
 package com.marasm.just;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import org.apache.commons.io.*;
@@ -11,9 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.marasm.just.Utils.execShell;
-import static com.marasm.just.Utils.fileExists;
-import static com.marasm.just.Utils.kDependencies;
+import static com.marasm.just.Utils.*;
 
 /**
  * Created by Andrey Bogdanov on 15.11.2015.
@@ -60,7 +58,53 @@ public class Package {
         }
         System.out.println("Installing package " + this.name);
         boolean result = this.registerAsInstalled();
-        // TODO: Dependencies installation
+        if(this.dependencies != null)
+        {
+            if(this.dependencies.length() > 0)
+            {
+                for(int i = 0; i < this.dependencies.length(); i++)
+                {
+                    String depName = this.dependencies.getString(i);
+                    ArrayList<Package> foundPackages = Repository.findPackages(depName);
+                    if(foundPackages != null)
+                    {
+                        if(foundPackages.size() > 0)
+                        {
+                            Package toInstall = this.selectPackage(foundPackages);
+                            if(toInstall == null)
+                            {
+                                System.out.println("Failed to install dependency " + depName + " for " + this.name);
+                                this.unregisterFromInstalled();
+                                return false;
+                            }
+                            toInstall.install();
+                        }
+                    }
+                    Package pack = installedPackage(depName);
+                    if(pack != null)
+                    {
+                        // TODO: check this stuff
+                        if(pack.inDependencies == null) {
+                            pack.inDependencies = new JSONArray();
+                        }
+                        JSONObject obj = new JSONObject();
+                        obj.put("name", this.name);
+                        pack.inDependencies.put(obj.toString());
+                        try {
+                            FileWriter writer = new FileWriter(Utils.subFolder(Utils.installedPath(), depName +
+                                    "/inDependencies.json"));
+                            pack.inDependencies.write(writer);
+                            writer.close();
+                        }
+                        catch(IOException e)
+                        {
+                            e.printStackTrace();
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
         if(!result) return false;
         String cmd = new String("cd " + Utils.subFolder(Utils.installedPath(), this.name) + " && ./install");
         if(Utils.execShell(cmd) != true)
@@ -91,6 +135,12 @@ public class Package {
     {
         return packageWithPath(Utils.subFolder(repo.path, name));
     }
+
+    static Package installedPackage(String name)
+    {
+        return packageWithPath(Utils.subFolder(Utils.installedPath(), name));
+    }
+
     static Package packageWithPath(String path)
     {
         if(!fileExists(path)){return null;}
@@ -117,6 +167,48 @@ public class Package {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    Package selectPackage(ArrayList<Package> packageList)
+    {
+        if(packageList.size() < 1)
+            return null;
+        if(packageList.size() == 1)
+            return packageList.get(0);
+        if(Utils.getSettings(Utils.kAutomatic).toString() == "automatic")
+        {
+            // TODO: discuss importance of this automatic installation type
+            return packageList.get(0);
+        }
+        for(;;)
+        {
+            for(int i = 0; i < packageList.size(); i++)
+            {
+                System.out.println(i + ": " + packageList.get(i));
+            }
+            System.out.print("select package (0-" + (packageList.size() - 1) + ":");
+            BufferedReader consoleInput = new BufferedReader(new InputStreamReader(System.in));
+            try{
+                String inputString = consoleInput.readLine();
+                for(;inputString != null;)
+                {
+                    System.out.print("select package (0-" + (packageList.size() - 1) + ":");
+                    inputString = consoleInput.readLine();
+                    int chosenIndex = Integer.parseInt(inputString);
+                    if(chosenIndex >= 0 && chosenIndex < packageList.size())
+                    {
+                        return packageList.get(chosenIndex);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+            catch(NumberFormatException nfe){
+                nfe.printStackTrace();
+                return null;
+            }
         }
     }
 }
