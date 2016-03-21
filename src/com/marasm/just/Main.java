@@ -1,11 +1,12 @@
 package com.marasm.just;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 import com.marasm.just.Utils;
+import com.sun.corba.se.impl.javax.rmi.CORBA.Util;
+import org.apache.commons.io.FilenameUtils;
 
 public class Main
 {
@@ -82,8 +83,16 @@ public class Main
                 System.out.println("Command is not yet implemented");
                 break;
             case "repos":
-                // TODO: Add after Repository class is implemented
-                System.out.println("Command is not yet implemented");
+                result=true;
+                ArrayList<String>repos=Utils.arrayOfFoldersInFolder(Utils.reposPath());
+                if(repos.size()==0){System.out.println("No repos yet");break;}
+                System.out.println("repos:");
+                for(String r:repos)
+                {
+                    Repository re=Repository.repoNamed(Utils.lastPathComponent(r));
+                    if(re!=null){System.out.println(re.name+" "+re.path);}
+                    else{System.out.println("ERROR: invalid repository "+r);}
+                }
                 break;
             case "help":
                 result=true;
@@ -142,7 +151,9 @@ public class Main
             BufferedReader consoleInput = new BufferedReader(new InputStreamReader(System.in));
             try {
                 String inputString = consoleInput.readLine();
+                if(inputString==null){return;}
                 String[] args = inputString.split(" ");
+                if(args.length<=0){continue;}
                 String[] cmdArgs = new String[args.length - 1];
 
                 for(int i = 0;i < args.length - 1; i++)

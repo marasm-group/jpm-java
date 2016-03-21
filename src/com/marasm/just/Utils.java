@@ -147,4 +147,20 @@ public class Utils {
     {
         return cmd.replaceFirst("\\%\\@",path).replaceFirst("\\%\\@",remote);
     }
+    static String lastPathComponent(String path)
+    {
+        if (null != path && path.length() > 0 )
+        {
+            int endIndex = path.lastIndexOf("/");
+            if(endIndex==path.length())
+            {
+                return lastPathComponent(path.substring(0,endIndex));
+            }
+            if (endIndex != -1)
+            {
+                return path.substring(endIndex+1, path.length());
+            }
+        }
+        return "";
+    }
 }

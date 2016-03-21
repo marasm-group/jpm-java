@@ -49,7 +49,7 @@ public class Repository
         r.name=name;
         r.path=pathForRepoNamed(name);
         try {
-            String infoStr=FileUtils.readFileToString(new File(r.path));
+            String infoStr=FileUtils.readFileToString(new File(Utils.subFolder(r.path,"info.json")));
             r.info=new JSONObject(infoStr);
             return r;
         } catch (IOException e) {
