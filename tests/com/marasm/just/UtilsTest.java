@@ -1,4 +1,4 @@
-package com.marasm;
+package com.marasm.just;
 
 import org.junit.Test;
 
