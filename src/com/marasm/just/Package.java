@@ -28,14 +28,15 @@ public class Package {
     String author;
     String version;
     String path;
+    Repository repo=null;
 
     boolean registerAsInstalled()
     {
         File src = new File(this.path);
         File dst = new File(Utils.subFolder(Utils.installedPath(), this.name));
         try{
-            FileUtils.copyFile(src,dst);
-            return true;
+            FileUtils.copyDirectory(src,dst);
+            return Utils.setExecutable(dst);
         }
         catch(IOException e) {
             e.printStackTrace();
@@ -46,10 +47,25 @@ public class Package {
     boolean unregisterFromInstalled()
     {
         File packageToUnregister = new File(Utils.installedPath(), this.name);
-        return packageToUnregister.delete();
+        try {
+            FileUtils.deleteDirectory(packageToUnregister);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     boolean install()
+    {
+        boolean res=install_internal();
+        if(!res)
+        {
+            unregisterFromInstalled();
+        }
+        return res;
+    }
+    private boolean install_internal()
     {
         if(new File(Utils.subFolder(Utils.installedPath(), this.name)).exists())
         {
@@ -126,7 +142,7 @@ public class Package {
         return false;
     }
 
-    ArrayList<Package> installed()
+    static ArrayList<Package> installed()
     {
         // TODO: check this. I highly doubt this will work.
         ArrayList<String> names = Utils.arrayOfFoldersInFolder(Utils.installedPath());
@@ -134,7 +150,7 @@ public class Package {
         for(int i = 0; i < names.size(); i++)
         {
             String name = names.get(i);
-            Package r = packageWithPath(Utils.subFolder(Utils.installedPath(), this.name));
+            Package r = packageWithPath(Utils.subFolder(Utils.installedPath(), name));
             if(r != null)
                 packages.add(r);
         }
@@ -180,7 +196,7 @@ public class Package {
         }
     }
 
-    Package selectPackage(ArrayList<Package> packageList)
+    static Package selectPackage(ArrayList<Package> packageList)
     {
         if(packageList.size() < 1)
             return null;
@@ -220,5 +236,11 @@ public class Package {
                 return null;
             }
         }
+    }
+    public String toString()
+    {
+        String res=name+" "+version;
+        if(repo!=null){res+=" ("+repo.name+")";}
+        return res;
     }
 }

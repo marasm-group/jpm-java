@@ -1,8 +1,6 @@
 package com.marasm.just;
 import javax.annotation.processing.FilerException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.Object;
 import java.lang.reflect.Array;
 import java.nio.file.DirectoryStream;
@@ -10,7 +8,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
-import java.io.File;
 
 /**
  * Created by Andrey Bogdanov on 31.10.15.
@@ -101,14 +98,11 @@ public class Utils {
         Process process;
         try {
             process = Runtime.getRuntime().exec(cmdArr);
-            process.waitFor();
-            BufferedReader bReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-            String line = "";
-            while((line = bReader.readLine()) != null)
-            {
-                output.append(line + "\n");
-            }
+            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader err = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            new OutputThread(in).start();
+            new OutputThread(err).start();
+            if(process.waitFor()!=0){return false;}
         }
         catch (IOException fe)
         {
@@ -162,5 +156,40 @@ public class Utils {
             }
         }
         return "";
+    }
+    static public boolean setExecutable(File folder)
+    {
+        folder.setReadable(true,false);
+        folder.setWritable(true,false);
+        folder.setExecutable(true,false);
+        if(folder.isDirectory())
+        {
+            for(String name:folder.list())
+            {
+                File child=new File(subFolder(folder.getAbsolutePath(),name));
+                if(child!=null)
+                {
+                    if(!setExecutable(child)){return false;}
+                }
+            }
+        }
+        return true;
+    }
+    static class OutputThread extends Thread
+    {
+        BufferedReader reader;
+        public OutputThread(BufferedReader r){reader=r;}
+        @Override public void  run()
+        {
+            String line="";
+            try {
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+                reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

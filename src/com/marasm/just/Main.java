@@ -63,6 +63,7 @@ public class Main
 
     static void execCMD(String cmd, String[] args)
     {
+        if(cmd.length()<=0){return;}
         boolean result=false;
         switch (cmd)
         {
@@ -75,8 +76,17 @@ public class Main
                 System.out.println("Command is not yet implemented");
                 break;
             case "installed":
-                // TODO: Add after Package class is implemented
-                System.out.println("Command is not yet implemented");
+                ArrayList<Package> installed=Package.installed();
+                if(installed!=null && installed.size()>0)
+                {
+                    for(Package p:installed)
+                    {
+                        System.out.println(""+p);
+                    }
+                }else {
+                    System.out.println("No packages installed!");
+                }
+                result=true;
                 break;
             case "update":
                 // TODO: Add after Package class is implemented
@@ -105,20 +115,50 @@ public class Main
             case "list":
                 if(args.length<1){System.out.println("Too few arguments");break;}
                 Repository r=Repository.repoNamed(args[0]);
+                if(r==null){System.out.println("No repo named '"+args[0]+"'");break;}
                 ArrayList<Package>allPackages=r.allPackages();
                 for(Package p:allPackages)
                 {
-                    System.out.println(p.name+" "+p.version);
+                    System.out.println(""+p);
                 }
                 result=true;
                 break;
             case "search":
-                // TODO: Add after Repository class is implemented
-                System.out.println("Command is not yet implemented");
+                if(args.length<1){System.out.println("Too few arguments");break;}
+                for(String arg:args)
+                {
+                    ArrayList<Package>found=Repository.findPackages(arg);
+                    if(found.size()<=0){
+                        System.out.println(arg+": not found!");
+                    }else{
+                        System.out.println(arg+":");
+                        for(Package p:found)
+                        {
+                            System.out.println("\t"+p);
+                        }
+                    }
+                }
+                result=true;
                 break;
             case "install":
-                // TODO: Add after Repository and Package classes are implemented
-                System.out.println("Command is not yet implemented");
+                if(args.length<1){System.out.println("Too few arguments");break;}
+                result=true;
+                for(String arg:args)
+                {
+                    ArrayList<Package> found=Repository.findPackages(arg);
+                    if(found.size()<=0)
+                    {
+                        System.out.println("Package '"+arg+"' not found");
+                        result=false;
+                        break;
+                    }
+                    Package p=Package.selectPackage(found);
+                    if(p!=null)
+                    {
+                        if(!p.install()){System.out.println("failed to install '"+arg+"'");result=false;break;}
+                    }
+                    else {System.out.println("failed to install '"+arg+"'");result=false;break;}
+                }
                 break;
             case "remove":
                 // TODO: Add after Package class is implemented
