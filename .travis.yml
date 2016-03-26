@@ -1,8 +1,5 @@
 language: java
 jdk:
   - oraclejdk8
-os:
-  - linux
-  - osx
 sudo: false
 script: mvn clean package
