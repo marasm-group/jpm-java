@@ -72,7 +72,8 @@ public class Package {
             System.out.println("Package " + this.name + " is already installed");
             return false;
         }
-        System.out.println("Installing package " + this.name);
+        File pkg = new File(this.path);
+        System.out.println("Installing package " + this.name + " with size " + pkg.length());
         boolean result = this.registerAsInstalled();
         if(this.dependencies != null)
         {
