@@ -15,7 +15,7 @@ import static com.marasm.just.Utils.*;
  */
 public class Repository
 {
-    static final String addRepoCMD="cd \"%@\" && git clone \"%@\" --depth=1 && chmod -R 0777 ./*";
+    static final String addRepoCMD="cd \"%@\" && git clone \"%@\" --depth=1 && chmod -R 0755 ./*";
     static final String refreshRepoCMD="cd \"%@\" && git fetch --all --depth=1 && git reset --hard FETCH_HEAD && git pull --depth=1";
 
     JSONObject info;
