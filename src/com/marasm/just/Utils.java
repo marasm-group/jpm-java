@@ -94,7 +94,12 @@ public class Utils {
     {
         // TODO: Windows cmd support. Right now it doesn't work.
         StringBuffer output =  new StringBuffer();
-        String[] cmdArr = new String[]{"/bin/bash", "-c",cmd};
+        String osName = System.getProperty("os.name");
+        String[] cmdArr;
+        if(!osName.contains("Windows"))
+            cmdArr = new String[]{"/bin/bash", "-c",cmd};
+        else
+            cmdArr = new String[]{"powershell", "/C", cmd};
         Process process;
         try {
             process = Runtime.getRuntime().exec(cmdArr);

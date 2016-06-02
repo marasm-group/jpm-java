@@ -58,6 +58,9 @@ public class UtilsTest {
     public void testExecShell() throws Exception {
         assertTrue(Utils.execShell("ls"));
         assertTrue(Utils.execShell("pwd"));
-        assertTrue(Utils.execShell("echo $JAVA_HOME"));
+        if(System.getProperty("os.name").contains("Windows"))
+            assertTrue(Utils.execShell("echo $JAVA_HOME"));
+        else
+            assertTrue(Utils.execShell("echo %JAVA_HOME%"));
     }
 }
