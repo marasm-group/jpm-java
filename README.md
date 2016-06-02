@@ -12,7 +12,7 @@ $$ |  $$ |$$ |  $$ | \____$$\   $$ |$$\
 ```
 Just a simple package manager
 
-## Lisence ##
+## License ##
 
 This software is licensed under [WTFPL](http://www.wtfpl.net/about/). So you can do with it whatever you want!
 
