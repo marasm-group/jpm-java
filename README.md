@@ -1,4 +1,4 @@
-Java port of OS X package manager "just" [![Build Status](https://travis-ci.org/marasm-group/jpm-java.svg?branch=master)](https://travis-ci.org/marasm-group/jpm-java)
+Java port of OS X package manager "just" [![Build Status](https://travis-ci.org/marasm-group/jpm-java.svg?branch=master)](https://travis-ci.org/marasm-group/jpm-java)   [![Issue Count](https://codeclimate.com/github/marasm-group/jpm-java/badges/issue_count.svg)](https://codeclimate.com/github/marasm-group/jpm-java)
 ```
    $$$$$\                       $$\
    \__$$ |                      $$ |
