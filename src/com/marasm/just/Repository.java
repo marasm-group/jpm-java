@@ -100,7 +100,7 @@ public class Repository
         String[] names = file.list();
         for(String name : names)
         {
-            if (new File(reposPath()+"/" + name).isDirectory())
+            if (new File(subFolder(reposPath(),name)).isDirectory())
             {
                 Repository repo = Repository.repoNamed(name);
                 res.add(repo);
