@@ -72,8 +72,7 @@ public class Main
                 System.exit(0);
                 break;
             case "refresh":
-                // TODO: Add after Repository class is implemented
-                System.out.println("Command is not yet implemented");
+                result = refreshCmd(args);
                 break;
             case "installed":
                 ArrayList<Package> installed=Package.installed();
@@ -89,8 +88,7 @@ public class Main
                 result=true;
                 break;
             case "update":
-                // TODO: Add after Package class is implemented
-                System.out.println("Command is not yet implemented");
+                result = updateCmd(args);
                 break;
             case "repos":
                 result=true;
@@ -161,9 +159,26 @@ public class Main
                 }
                 break;
             case "remove":
-                // TODO: Add after Package class is implemented
                 System.out.println("Command is not yet implemented");
                 if(args.length<1){System.out.println("Too few arguments");break;}
+                int failsCount = 0;
+                for(String name : args)
+                {
+                    Repository repo = Repository.repoNamed(name);
+                    if(repo != null)
+                    {
+                        if(!repo.remove())
+                        {
+                            System.out.println("Repository "+name+" was not removed");
+                            failsCount++;
+                        }
+                    }
+                    else
+                    {
+                        System.out.println("Repository "+name+" not found");
+                        failsCount++;
+                    }
+                }
                 break;
             case "addrepo":
                 if(args.length<1){System.out.println("Too few arguments");break;}
@@ -212,6 +227,55 @@ public class Main
                 return;
             }
         }
+    }
+    static boolean updateCmd(String[] args)
+    {
+        // TODO: implement
+        return false;
+    }
+    static boolean refreshCmd(String[] args)
+    {
+        boolean result = false;
+        if (args.length <= 0)
+        {
+            ArrayList<Repository> allrepos = Repository.all();
+            if (allrepos.size() <= 0)
+            {
+                System.out.println("No repositories to refresh");
+            }
+            int failsCount = 0;
+            for(Repository repo : allrepos)
+            {
+                if(!repo.refresh())
+                {
+                    System.out.println("Error while refreshing "+repo.name);
+                    failsCount++;
+                }
+            }
+            result = failsCount < allrepos.size();
+        }
+        else
+        {
+            int failsCount = 0;
+            for(String repoName : args)
+            {
+                Repository repo = Repository.repoNamed(repoName);
+                if(repo == null)
+                {
+                    System.out.println("Repository "+repoName+" was not found");
+                }
+                else
+                {
+                    if(!repo.refresh())
+                    {
+                        System.out.println("Error while refreshing "+repo.name);
+                        failsCount++;
+                    }
+                }
+            }
+            result = failsCount < args.length;
+        }
+        return result;
     }
 
     public static void main(String[] args)

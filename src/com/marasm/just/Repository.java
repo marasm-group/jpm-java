@@ -22,6 +22,8 @@ public class Repository
     String name;
     String path;
 
+    private Repository(){}
+
     boolean refresh()
     {
         System.out.println("refreshing repository '"+name+"'");
@@ -91,7 +93,21 @@ public class Repository
             return null;
         }
     }
-    ArrayList<Repository> all(){return new ArrayList<Repository>();}
+    static ArrayList<Repository> all()
+    {
+        ArrayList<Repository> res = new ArrayList<Repository>();
+        File file = new File(reposPath());
+        String[] names = file.list();
+        for(String name : names)
+        {
+            if (new File(reposPath()+"/" + name).isDirectory())
+            {
+                Repository repo = Repository.repoNamed(name);
+                res.add(repo);
+            }
+        }
+        return res;
+    }
     static boolean exists(String name)
     {
         File f=new File(pathForRepoNamed(name));
