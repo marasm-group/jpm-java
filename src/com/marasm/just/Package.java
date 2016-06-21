@@ -21,6 +21,7 @@ public class Package {
 
     final static String installPackageCMD = "cd %@ && ./install";
     final static String removePackageCMD = "cd %@ && ./remove";
+    final static String updatePackageCMD = "cd %@ && ./update"; //Should be run only if update script exists, otherwise just run install once again
 
     JSONObject info;
     JSONArray dependencies,inDependencies;
