@@ -133,12 +133,15 @@ public class Package {
         return false;
     }
 
-    static boolean remove()
+    static boolean remove()//TODO: implement
     {
         return false;
     }
-
-    static boolean update()
+    static boolean updateAvailable()//TODO: implement
+    {
+        return  false;
+    }
+    static boolean update()//TODO: implement
     {
         return false;
     }

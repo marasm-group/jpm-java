@@ -230,8 +230,50 @@ public class Main
     }
     static boolean updateCmd(String[] args)
     {
-        // TODO: implement
-        return false;
+        boolean result = false;
+        if (args.length <= 0)
+        {
+            ArrayList<Package> installedPackages = Package.installed();
+            if (installedPackages.size() <= 0)
+            {
+                System.out.println("No installed packages to update");
+            }
+            int failsCount = 0;
+            for(Package pack : installedPackages)
+            {
+                if(pack.updateAvailable()) {
+                    if (!pack.update()) {
+                        System.out.println("Error while updating " + pack.name);
+                        failsCount++;
+                    }
+                }else {System.out.println("Package " + pack.name+" is up to date");}
+            }
+            result = failsCount < installedPackages.size();
+        }
+        else
+        {
+            int failsCount = 0;
+            for(String packName : args)
+            {
+                Package pack= Package.installedPackage(packName);
+                if(pack == null)
+                {
+                    System.out.println("Package "+packName+" is not installed");
+                    failsCount++;
+                }
+                else
+                {
+                    if(pack.updateAvailable()) {
+                        if (!pack.update()) {
+                            System.out.println("Error while updating " + pack.name);
+                            failsCount++;
+                        }
+                    }else {System.out.println("Package " + pack.name+" is up to date");}
+                }
+            }
+            result = failsCount < args.length;
+        }
+        return result;
     }
     static boolean refreshCmd(String[] args)
     {
