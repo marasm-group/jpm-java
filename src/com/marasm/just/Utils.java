@@ -1,4 +1,6 @@
 package com.marasm.just;
+import org.json.JSONObject;
+
 import javax.annotation.processing.FilerException;
 import java.io.*;
 import java.lang.Object;
@@ -8,6 +10,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.Scanner;
 
 /**
  * Created by Andrey Bogdanov on 31.10.15.
@@ -21,7 +24,7 @@ public class Utils {
     final static String kIsLibrary = "isLibrary";
     final static String kAutomatic = "automatic";
 
-    static Hashtable<String, Object> just_settings;
+    static Hashtable<String, Object> just_settings = loadSettings();
 
     static Object getSettings (Object key)
     {
@@ -35,6 +38,62 @@ public class Utils {
     static void SetSettings(Hashtable<String, Object> set)
     {
         just_settings = set;
+    }
+    private static Hashtable<String, Object> loadSettings()
+    {
+        String settingsPath = subFolder(just_home(),"config.json");
+        try
+        {
+            Scanner s = new Scanner(new File(settingsPath));
+            // remove comments
+            ArrayList<String> lines = new ArrayList<String>();
+            while (s.hasNext()){
+                lines.add(s.next());
+            }
+            s.close();
+            String jsonStr = "";
+            for (String line : lines)
+            {
+                if(!line.startsWith("//"))
+                {
+                    jsonStr += line+"\n";
+                }
+            }
+
+
+        }
+        catch (Exception e)
+        {
+            return loadDefaultSettings();
+        }
+        return null;
+    }
+    private static Hashtable<String, Object> json2Hashtable(String jsonStr)
+    {
+        String[] lines = jsonStr.split("\n");
+        jsonStr = "";
+        for (String line : lines)
+        {
+            if(!line.startsWith("//"))
+            {
+                jsonStr += line+"\n";
+            }
+        }
+        JSONObject json= new JSONObject(jsonStr);
+        return json2Hashtable(json);
+    }
+    private static Hashtable<String, Object> json2Hashtable(JSONObject json)
+    {
+        Hashtable<String, Object> res = new Hashtable<>();
+        for(String key : json.keySet())
+        {
+            res.put(key,json.get(key));
+        }
+        return res;
+    }
+    private static Hashtable<String, Object> loadDefaultSettings()
+    {
+        return json2Hashtable("{"+kAutomatic+" : true}");
     }
 
     public static String mainJarLocation()

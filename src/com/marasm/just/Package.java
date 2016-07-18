@@ -207,7 +207,7 @@ public class Package {
             return null;
         if(packageList.size() == 1)
             return packageList.get(0);
-        if(Utils.getSettings(Utils.kAutomatic).toString() == "automatic")
+        if( ((Boolean)Utils.getSettings(Utils.kAutomatic)).booleanValue() == true)
         {
             // TODO: discuss importance of this automatic installation type
             return packageList.get(0);
